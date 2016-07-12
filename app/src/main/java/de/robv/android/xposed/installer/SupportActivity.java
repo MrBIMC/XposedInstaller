@@ -1,6 +1,5 @@
 package de.robv.android.xposed.installer;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -10,16 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import de.robv.android.xposed.installer.util.NavUtil;
-import de.robv.android.xposed.installer.util.ThemeUtil;
+import com.kabouzeid.appthemehelper.ATH;
 
-import static de.robv.android.xposed.installer.XposedApp.darkenColor;
+import de.robv.android.xposed.installer.util.NavUtil;
 
 public class SupportActivity extends XposedBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeUtil.setTheme(this);
         setContentView(R.layout.activity_container);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -31,6 +28,10 @@ public class SupportActivity extends XposedBaseActivity {
                 finish();
             }
         });
+
+        ATH.setActivityToolbarColorAuto(this, getATHToolbar());
+        ATH.setStatusbarColorAuto(this);
+        ATH.setTaskDescriptionColorAuto(this);
 
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
@@ -49,13 +50,6 @@ public class SupportActivity extends XposedBaseActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            if (Build.VERSION.SDK_INT >= 21)
-                getActivity().getWindow().setStatusBarColor(darkenColor(XposedApp.getColor(getActivity()), 0.85f));
         }
 
         @Override

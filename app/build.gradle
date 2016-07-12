@@ -37,5 +37,8 @@ dependencies {
     compile 'com.github.machinarius:preferencefragment:0.1.1'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile('com.github.kabouzeid:app-theme-helper:1.0.2') {
+        transitive = true
+    }
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

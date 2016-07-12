@@ -334,4 +334,7 @@
     <string name="details">Details</string>
     <string name="look_and_feel">Look and feel</string>
 
+    <string name="primary_color">Primary color</string>
+    <string name="accent_color">Accent color</string>
+    <string name="dark_theme">Dark theme</string>
 </resources>

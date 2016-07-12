@@ -11,6 +11,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.kabouzeid.appthemehelper.ThemeStore;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,7 +69,7 @@ public final class NotificationUtil {
             builder.setPriority(2);
 
         if (prefs.getBoolean("colored_notification", false))
-            builder.setColor(XposedApp.getColor(sContext));
+            builder.setColor(ThemeStore.primaryColor(sContext));
 
         Intent iActivateAndReboot = new Intent(sContext, RebootReceiver.class);
         iActivateAndReboot.putExtra(RebootReceiver.EXTRA_ACTIVATE_MODULE, packageName);
@@ -114,7 +116,7 @@ public final class NotificationUtil {
             builder.setPriority(2);
 
         if (prefs.getBoolean("colored_notification", false))
-            builder.setColor(XposedApp.getColor(sContext));
+            builder.setColor(ThemeStore.primaryColor(sContext));
 
         Intent iSoftReboot = new Intent(sContext, RebootReceiver.class);
         iSoftReboot.putExtra(RebootReceiver.EXTRA_SOFT_REBOOT, true);
@@ -154,7 +156,7 @@ public final class NotificationUtil {
             builder.setPriority(2);
 
         if (prefs.getBoolean("colored_notification", false))
-            builder.setColor(XposedApp.getColor(sContext));
+            builder.setColor(ThemeStore.primaryColor(sContext));
 
         NotificationCompat.BigTextStyle notiStyle = new NotificationCompat.BigTextStyle();
         notiStyle.setBigContentTitle(title);

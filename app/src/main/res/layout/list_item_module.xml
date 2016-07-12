@@ -80,7 +80,7 @@
                 android:visibility="gone"/>
         </LinearLayout>
 
-        <CheckBox
+        <com.kabouzeid.appthemehelper.common.views.ATECheckBox
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

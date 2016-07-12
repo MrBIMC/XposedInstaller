@@ -13,4 +13,5 @@
         <attr name="icons" format="reference"/>
     </declare-styleable>
 
+    <attr name="ate_key" format="string"/>
 </resources>

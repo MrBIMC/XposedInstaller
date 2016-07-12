@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory
+    <com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory
         android:key="group_installation"
         android:title="@string/settings_group_installation">
 
@@ -14,9 +14,9 @@
             android:summary="%s"
             android:title="@string/settings_install_mode"/>
 
-    </PreferenceCategory>
+    </com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory>
 
-    <PreferenceCategory
+    <com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory
         android:key="group_download"
         android:title="@string/settings_group_download">
 
@@ -36,9 +36,9 @@
             android:summary="%s"
             android:title="@string/update_interval"/>
 
-    </PreferenceCategory>
+    </com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory>
 
-    <PreferenceCategory android:title="@string/look_and_feel">
+    <com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory android:title="@string/look_and_feel">
 
         <de.robv.android.xposed.installer.widget.IconListPreference
             android:defaultValue="0"
@@ -55,52 +55,61 @@
             android:entryValues="@array/theme_values"
             android:key="theme"
             android:summary="%s"
-            android:title="@string/settings_theme"/>
+            android:title="@string/settings_theme"
+            app:ateKey_pref_list="?ate_key"/>
 
-        <Preference
-            android:key="colors"
-            android:title="@string/choose_color"/>
+        <com.kabouzeid.appthemehelper.common.prefs.ATEColorPreference
+            android:key="primary_color"
+            android:persistent="false"
+            android:title="@string/primary_color"
+            app:ateKey_pref_color="?ate_key"/>
 
-        <SwitchPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATEColorPreference
+            android:key="accent_color"
+            android:persistent="false"
+            android:title="@string/accent_color"
+            app:ateKey_pref_color="?ate_key"/>
+
+        <com.kabouzeid.appthemehelper.common.prefs.ATESwitchPreference
             android:defaultValue="false"
             android:key="nav_bar"
             android:title="@string/nav_bar_coloration"/>
 
-        <SwitchPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATESwitchPreference
             android:defaultValue="false"
             android:key="colored_notification"
             android:title="@string/notification_coloration"/>
 
-    </PreferenceCategory>
+    </com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory>
 
-    <PreferenceCategory
+    <com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory
         android:key="group_app"
         android:title="@string/settings_group_app">
 
-        <CheckBoxPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
             android:defaultValue="true"
             android:key="confirm_reboots"
             android:title="@string/confirm_reboots"/>
 
-        <CheckBoxPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
             android:defaultValue="false"
             android:key="skip_xposedminversion_check"
             android:summary="@string/skip_xposedminversion_check_summ"
             android:title="@string/skip_xposedminversion_check"/>
 
-        <CheckBoxPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
             android:defaultValue="true"
             android:key="heads_up"
             android:summary="@string/enable_heads_up_summary"
             android:title="@string/enable_heads_up"/>
 
-        <CheckBoxPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
             android:defaultValue="true"
             android:key="snack_bar"
             android:title="@string/notify_module_update"/>
 
 
-        <CheckBoxPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
             android:defaultValue="true"
             android:key="chrome_tabs"
             android:summary="@string/chrome_custom_tabs_summ"
@@ -114,42 +123,42 @@
             android:summary="%s"
             android:title="@string/settings_default_view"/>
 
-        <CheckBoxPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
             android:key="open_drawer"
             android:summary="@string/open_drawer_summ"
             android:title="@string/open_drawer"/>
 
-    </PreferenceCategory>
+    </com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory>
 
-    <PreferenceCategory
+    <com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory
         android:key="group_experimental"
         android:title="@string/settings_group_experimental">
 
-        <CheckBoxPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
             android:defaultValue="false"
             android:key="disable_resources"
             android:persistent="false"
             android:summary="@string/settings_disable_resources_summary"
             android:title="@string/settings_disable_resources"/>
 
-        <CheckBoxPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
             android:defaultValue="false"
             android:key="install_with_su"
             android:summary="@string/install_with_su_summ"
             android:title="@string/install_with_su"/>
 
-        <CheckBoxPreference
+        <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
             android:defaultValue="false"
             android:key="ignore_updates"
             android:summary="@string/ignore_updates_summ"
             android:title="@string/ignore_updates"/>
 
         <!--
-                <CheckBoxPreference
+                <com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference
                     android:defaultValue="false"
                     android:key="performance_experiment"
                     android:summary="@string/settings_performance_experiment_summary"
                     android:title="@string/settings_performance_experiment" />
         -->
-    </PreferenceCategory>
+    </com.kabouzeid.appthemehelper.common.prefs.ATEPreferenceCategory>
 </PreferenceScreen>

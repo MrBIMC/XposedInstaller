@@ -2,6 +2,7 @@ package de.robv.android.xposed.installer;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -16,14 +17,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.kabouzeid.appthemehelper.ATH;
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.util.MaterialDialogsUtil;
+import com.kabouzeid.appthemehelper.util.NavigationViewUtil;
+
 import de.robv.android.xposed.installer.util.ModuleUtil;
 import de.robv.android.xposed.installer.util.ModuleUtil.InstalledModule;
 import de.robv.android.xposed.installer.util.ModuleUtil.ModuleListener;
 import de.robv.android.xposed.installer.util.RepoLoader;
 import de.robv.android.xposed.installer.util.RepoLoader.RepoListener;
 import de.robv.android.xposed.installer.util.ThemeUtil;
-
-import static de.robv.android.xposed.installer.XposedApp.darkenColor;
 
 public class WelcomeActivity extends XposedBaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -40,39 +44,45 @@ public class WelcomeActivity extends XposedBaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeUtil.setTheme(this);
         setContentView(R.layout.activity_welcome);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        assert toolbar != null;
+        toolbar.setBackgroundColor(ThemeStore.primaryColor(this));
+
         assert mNavigationView != null;
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this,
-                mDrawerLayout, mToolbar, R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                super.onDrawerSlide(drawerView, 0); // this disables the arrow @ completed state
-            }
-
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, 0); // this disables the animation
-            }
-        };
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+
+        int accentColor = ThemeStore.accentColor(this);
+
+        NavigationViewUtil.setItemTextColors(mNavigationView, ThemeStore.textColorPrimary(this), accentColor);
+        NavigationViewUtil.setItemIconColors(mNavigationView, ThemeStore.textColorSecondary(this), accentColor);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         mSelectedId = mNavigationView.getMenu().getItem(prefs.getInt("default_view", 0)).getItemId();
         mSelectedId = savedInstanceState == null ? mSelectedId : savedInstanceState.getInt(SELECTED_ITEM_ID);
         mPrevSelectedId = mSelectedId;
         mNavigationView.getMenu().findItem(mSelectedId).setChecked(true);
+
+        int statusBarColor;
+        ATH.setStatusbarColor(this, Color.TRANSPARENT);
+        statusBarColor = ThemeStore.statusBarColor(this);
+        mDrawerLayout.setStatusBarBackgroundColor(statusBarColor);
+        ATH.setLightStatusbarAuto(this, statusBarColor);
+        ATH.setTaskDescriptionColorAuto(this);
+
+        ThemeUtil.tintIcon(this, toolbar);
+
+        MaterialDialogsUtil.updateMaterialDialogsThemeSingleton(this);
 
         if (savedInstanceState == null) {
             mDrawerHandler.removeCallbacksAndMessages(null);
@@ -102,14 +112,6 @@ public class WelcomeActivity extends XposedBaseActivity
         mRepoLoader.addListener(this, false);
 
         notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        mDrawerLayout.setStatusBarBackgroundColor(darkenColor(XposedApp.getColor(this), 0.85f));
-
     }
 
     public void switchFragment(int itemId) {

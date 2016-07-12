@@ -165,6 +165,12 @@ public class ModulesFragment extends ListFragment implements ModuleListener {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        ThemeUtil.colorateMenu(getActivity(), menu, R.id.bookmarks);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_modules, menu);
     }

@@ -9,17 +9,22 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
+import com.kabouzeid.appthemehelper.ATH;
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.common.prefs.ATECheckBoxPreference;
+import com.kabouzeid.appthemehelper.common.prefs.ATEColorPreference;
+import com.kabouzeid.appthemehelper.common.prefs.ATEListPreference;
+import com.kabouzeid.appthemehelper.common.prefs.ATESwitchPreference;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,14 +33,11 @@ import de.robv.android.xposed.installer.util.RepoLoader;
 import de.robv.android.xposed.installer.util.ThemeUtil;
 import de.robv.android.xposed.installer.util.UpdateService;
 
-import static de.robv.android.xposed.installer.XposedApp.darkenColor;
-
 public class SettingsActivity extends XposedBaseActivity implements ColorChooserDialog.ColorCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeUtil.setTheme(this);
         setContentView(R.layout.activity_container);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -47,6 +49,10 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
                 finish();
             }
         });
+
+        ATH.setActivityToolbarColorAuto(this, getATHToolbar());
+        ATH.setStatusbarColorAuto(this);
+        ATH.setTaskDescriptionColorAuto(this);
 
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
@@ -64,41 +70,26 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
     }
 
     @Override
-    public void onColorSelection(ColorChooserDialog dialog,
-                                 @ColorInt int color) {
-        if (!dialog.isAccentMode()) {
-            XposedApp.getPreferences().edit().putInt("colors", color).apply();
+    public void onColorSelection(@NonNull ColorChooserDialog dialog, @ColorInt int selectedColor) {
+        final ThemeStore themeStore = ThemeStore.editTheme(this);
+        switch (dialog.getTitle()) {
+            case R.string.primary_color:
+                themeStore.primaryColor(selectedColor);
+                break;
+            case R.string.accent_color:
+                themeStore.accentColor(selectedColor);
+                break;
         }
+        themeStore.commit();
+        recreate();
     }
 
-    public static class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
-        public final static int[] PRIMARY_COLORS = new int[]{
-                Color.parseColor("#F44336"),
-                Color.parseColor("#E91E63"),
-                Color.parseColor("#9C27B0"),
-                Color.parseColor("#673AB7"),
-                Color.parseColor("#3F51B5"),
-                Color.parseColor("#2196F3"),
-                Color.parseColor("#03A9F4"),
-                Color.parseColor("#00BCD4"),
-                Color.parseColor("#009688"),
-                Color.parseColor("#4CAF50"),
-                Color.parseColor("#8BC34A"),
-                Color.parseColor("#CDDC39"),
-                Color.parseColor("#FFEB3B"),
-                Color.parseColor("#FFC107"),
-                Color.parseColor("#FF9800"),
-                Color.parseColor("#FF5722"),
-                Color.parseColor("#795548"),
-                Color.parseColor("#9E9E9E"),
-                Color.parseColor("#607D8B")
-        };
+    public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
         private static final File mDisableResourcesFlag = new File(XposedApp.BASE_DIR + "conf/disable_resources");
-        private Preference nav_bar;
-        private Preference colors;
         private PackageManager pm;
         private String packName;
         private Context mContext;
+
         private Preference.OnPreferenceChangeListener iconChange = new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference,
@@ -120,7 +111,7 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
 
                     ActivityManager.TaskDescription tDesc = new ActivityManager.TaskDescription(getString(R.string.app_name),
                             XposedApp.drawableToBitmap(mContext.getDrawable(drawable)),
-                            XposedApp.getColor(mContext));
+                            ThemeStore.primaryColor(mContext));
                     getActivity().setTaskDescription(tDesc);
                 }
 
@@ -138,15 +129,13 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.prefs);
 
-            nav_bar = findPreference("nav_bar");
-            colors = findPreference("colors");
+            ATESwitchPreference navBarPref = (ATESwitchPreference) findPreference("nav_bar");
             if (Build.VERSION.SDK_INT < 21) {
                 Preference heads_up = findPreference("heads_up");
 
                 heads_up.setEnabled(false);
-                nav_bar.setEnabled(false);
                 heads_up.setSummary(heads_up.getSummary() + " LOLLIPOP+");
-                nav_bar.setSummary("LOLLIPOP+");
+                navBarPref.setSummary(navBarPref.getSummary() + " LOLLIPOP+");
             }
 
             mContext = getActivity();
@@ -159,7 +148,7 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
                 }
             });
 
-            CheckBoxPreference prefDisableResources = (CheckBoxPreference) findPreference("disable_resources");
+            ATECheckBoxPreference prefDisableResources = (ATECheckBoxPreference) findPreference("disable_resources");
             prefDisableResources.setChecked(mDisableResourcesFlag.exists());
             prefDisableResources.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
@@ -178,15 +167,71 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
                 }
             });
 
-            colors.setOnPreferenceClickListener(this);
-
-            ListPreference customIcon = (ListPreference) findPreference("custom_icon");
+            ATEListPreference customIcon = (ATEListPreference) findPreference("custom_icon");
 
             pm = mContext.getPackageManager();
             packName = mContext.getPackageName();
 
             customIcon.setOnPreferenceChangeListener(iconChange);
 
+            ATEColorPreference primaryColorPref = (ATEColorPreference) findPreference("primary_color");
+            primaryColorPref.setColor(ThemeStore.primaryColor(getActivity()), Color.BLACK);
+            primaryColorPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    new ColorChooserDialog.Builder((SettingsActivity) getActivity(), R.string.primary_color)
+                            .preselect(ThemeStore.primaryColor(getActivity()))
+                            .allowUserColorInputAlpha(false)
+                            .show();
+                    return true;
+                }
+            });
+
+            ATEColorPreference accentColorPref = (ATEColorPreference) findPreference("accent_color");
+            accentColorPref.setColor(ThemeStore.accentColor(getActivity()), Color.BLACK);
+            accentColorPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    new ColorChooserDialog.Builder((SettingsActivity) getActivity(), R.string.accent_color)
+                            .preselect(ThemeStore.accentColor(getActivity()))
+                            .accentMode(true)
+                            .show();
+                    return true;
+                }
+            });
+
+            findPreference("theme").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    int theme = 0;
+                    switch ((String) newValue) {
+                        case "0":
+                            theme = R.style.Theme_XposedInstaller_Light;
+                            break;
+                        case "1":
+                            theme = R.style.Theme_XposedInstaller_Dark;
+                            break;
+                        case "2":
+                            theme = R.style.Theme_XposedInstaller_Dark_Black;
+                            break;
+                    }
+
+                    ThemeStore.editTheme(getActivity())
+                            .activityTheme(theme)
+                            .commit();
+                    getActivity().recreate();
+                    return true;
+                }
+            });
+
+            navBarPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    ThemeUtil.colorateNavigationBar(getActivity());
+                    getActivity().recreate();
+                    return true;
+                }
+            });
         }
 
         @Override
@@ -194,9 +239,6 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
             super.onResume();
 
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-
-            if (Build.VERSION.SDK_INT >= 21)
-                getActivity().getWindow().setStatusBarColor(darkenColor(XposedApp.getColor(getActivity()), 0.85f));
         }
 
         @Override
@@ -208,7 +250,7 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(colors.getKey()) || key.equals("theme") || key.equals(nav_bar.getKey()))
+            if (key.equals("theme"))
                 getActivity().recreate();
 
             if (key.equals("update_service_interval")) {
@@ -224,21 +266,5 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
             }
         }
 
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            SettingsActivity act = (SettingsActivity) getActivity();
-            if (act == null)
-                return false;
-
-            if (preference.getKey().equals(colors.getKey()))
-                new ColorChooserDialog.Builder(act, preference.getTitleRes())
-                        .backButton(R.string.back)
-                        .allowUserColorInput(false)
-                        .customColors(PRIMARY_COLORS, null)
-                        .doneButton(android.R.string.ok)
-                        .preselect(XposedApp.getColor(act)).show();
-
-            return true;
-        }
     }
 }

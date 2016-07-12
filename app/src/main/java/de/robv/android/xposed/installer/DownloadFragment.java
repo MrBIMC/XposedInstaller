@@ -25,6 +25,7 @@ import android.widget.FilterQueryProvider;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.kabouzeid.appthemehelper.ThemeStore;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -103,22 +104,19 @@ public class DownloadFragment extends Fragment implements RepoListener, ModuleLi
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.tab_downloader, container, false);
-        mListView = (StickyListHeadersListView) v
-                .findViewById(R.id.listModules);
-        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) v
-                .findViewById(R.id.swiperefreshlayout);
-        refreshLayout.setColorSchemeColors(XposedApp.getColor(getContext()));
-        refreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        mRepoLoader.setSwipeRefreshLayout(refreshLayout);
-                        mRepoLoader.triggerReload(true);
-                    }
-                });
+        mListView = (StickyListHeadersListView) v.findViewById(R.id.listModules);
+        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swiperefreshlayout);
+
+        refreshLayout.setColorSchemeColors(ThemeStore.accentColor(getContext()));
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mRepoLoader.setSwipeRefreshLayout(refreshLayout);
+                mRepoLoader.triggerReload(true);
+            }
+        });
         mRepoLoader.addListener(this, true);
         mModuleUtil.addListener(this);
         mListView.setAdapter(mAdapter);
@@ -161,12 +159,18 @@ public class DownloadFragment extends Fragment implements RepoListener, ModuleLi
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        ThemeUtil.colorateMenu(getActivity(), menu, R.id.menu_search, R.id.menu_sort);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_download, menu);
 
         // Setup search button
         final MenuItem searchItem = menu.findItem(R.id.menu_search);
-        mSearchView = (SearchView) searchItem.getActionView();
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         mSearchView.setIconifiedByDefault(true);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -194,6 +198,7 @@ public class DownloadFragment extends Fragment implements RepoListener, ModuleLi
                 return true; // Return true to expand action view
             }
         });
+        ThemeUtil.tintIcon(getActivity(), mSearchView);
     }
 
     private void setFilter(String filterText) {

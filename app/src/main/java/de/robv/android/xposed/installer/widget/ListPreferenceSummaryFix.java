@@ -3,9 +3,7 @@ package de.robv.android.xposed.installer.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.afollestad.materialdialogs.prefs.MaterialListPreference;
-
-public class ListPreferenceSummaryFix extends MaterialListPreference {
+public class ListPreferenceSummaryFix extends com.kabouzeid.appthemehelper.common.prefs.ATEListPreference {
     public ListPreferenceSummaryFix(Context context) {
         super(context);
     }

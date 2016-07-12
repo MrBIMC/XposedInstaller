@@ -15,12 +15,11 @@
             android:text="@string/install_warning"
             android:textSize="16sp"/>
 
-        <CheckBox
+        <com.kabouzeid.appthemehelper.common.views.ATECheckBox
             android:id="@android:id/checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/dont_show_again">
-        </CheckBox>
+            android:text="@string/dont_show_again"/>
     </LinearLayout>
 
 </ScrollView>

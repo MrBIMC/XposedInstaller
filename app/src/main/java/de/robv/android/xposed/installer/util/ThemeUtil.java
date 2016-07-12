@@ -1,37 +1,30 @@
 package de.robv.android.xposed.installer.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import de.robv.android.xposed.installer.R;
+import com.kabouzeid.appthemehelper.ATH;
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.util.ColorUtil;
+import com.kabouzeid.appthemehelper.util.MaterialValueHelper;
+import com.kabouzeid.appthemehelper.util.ToolbarContentTintHelper;
+
+import java.lang.reflect.Field;
+
 import de.robv.android.xposed.installer.XposedApp;
-import de.robv.android.xposed.installer.XposedBaseActivity;
 
 public final class ThemeUtil {
-	private static int[] THEMES = new int[] {
-			R.style.Theme_XposedInstaller_Light,
-			R.style.Theme_XposedInstaller_Dark,
-			R.style.Theme_XposedInstaller_Dark_Black, };
-
-	private ThemeUtil() {
-	}
-
-	public static int getSelectTheme() {
-		int theme = XposedApp.getPreferences().getInt("theme", 0);
-		return (theme >= 0 && theme < THEMES.length) ? theme : 0;
-	}
-
-	public static void setTheme(XposedBaseActivity activity) {
-		activity.mTheme = getSelectTheme();
-		activity.setTheme(THEMES[activity.mTheme]);
-	}
-
-	public static void reloadTheme(XposedBaseActivity activity) {
-		int theme = getSelectTheme();
-		if (theme != activity.mTheme)
-			activity.recreate();
-	}
 
 	public static int getThemeColor(Context context, int id) {
 		Theme theme = context.getTheme();
@@ -40,4 +33,51 @@ public final class ThemeUtil {
 		a.recycle();
 		return result;
 	}
+
+    public static void colorateNavigationBar(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            activity.getWindow().setNavigationBarColor(XposedApp.getPreferences().getBoolean("nav_bar", false) ? ThemeStore.primaryColor(activity) : Color.BLACK);
+        }
+    }
+
+    public static void colorateMenu(Activity activity, Menu menu, int... ids) {
+        for (int id : ids) {
+            MenuItem item = menu.findItem(id);
+            if (item == null) return;
+            Drawable d = item.getIcon();
+            if (d == null) return;
+            tintIcon(activity, d);
+        }
+    }
+
+    public static void tintIcon(Activity activity, Toolbar toolbar) {
+        if (toolbar.getNavigationIcon() != null) tintIcon(activity, toolbar.getNavigationIcon());
+        if (toolbar.getOverflowIcon() != null) tintIcon(activity, toolbar.getOverflowIcon());
+    }
+
+    public static void tintIcon(Activity activity, SearchView searchView) {
+        try {
+            Class cls = searchView.getClass();
+            Field f = cls.getDeclaredField("mSearchHintIcon");
+            f.setAccessible(true);
+
+            Drawable mSearchHintIcon = (Drawable) f.get(searchView);
+            if (mSearchHintIcon != null) {
+                tintIcon(activity, mSearchHintIcon);
+            }
+            int color = ColorUtil.isColorLight(ThemeStore.primaryColor(activity)) ? MaterialValueHelper.getPrimaryTextColor(activity, true) : MaterialValueHelper.getPrimaryTextColor(activity, false);
+
+            ToolbarContentTintHelper.InternalToolbarContentTintUtil.SearchViewTintUtil.setSearchViewContentColor(searchView, color);
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static void tintIcon(Activity activity, Drawable icon) {
+        if (ColorUtil.isColorLight(ThemeStore.primaryColor(activity))) {
+            int color = MaterialValueHelper.getPrimaryTextColor(activity, true);
+
+            icon.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+            ATH.setLightStatusbar(activity, true);
+        }
+    }
 }

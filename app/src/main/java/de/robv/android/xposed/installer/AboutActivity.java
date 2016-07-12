@@ -3,7 +3,6 @@ package de.robv.android.xposed.installer;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -18,20 +17,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.kabouzeid.appthemehelper.ATH;
 
 import de.robv.android.xposed.installer.util.NavUtil;
 import de.robv.android.xposed.installer.util.ThemeUtil;
 
 import static android.content.Intent.ACTION_SEND;
 import static android.content.Intent.EXTRA_TEXT;
-import static de.robv.android.xposed.installer.XposedApp.darkenColor;
 
 public class AboutActivity extends XposedBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeUtil.setTheme(this);
         setContentView(R.layout.activity_container);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -44,6 +42,10 @@ public class AboutActivity extends XposedBaseActivity {
             }
         });
 
+        ATH.setActivityToolbarColorAuto(this, getATHToolbar());
+        ATH.setStatusbarColorAuto(this);
+        ATH.setTaskDescriptionColorAuto(this);
+
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setTitle(R.string.nav_item_about);
@@ -55,6 +57,12 @@ public class AboutActivity extends XposedBaseActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.container, new AboutFragment()).commit();
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        ThemeUtil.colorateMenu(this, menu, R.id.share_app);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -78,13 +86,6 @@ public class AboutActivity extends XposedBaseActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            if (Build.VERSION.SDK_INT >= 21)
-                getActivity().getWindow().setStatusBarColor(darkenColor(XposedApp.getColor(getActivity()), 0.85f));
         }
 
         @Override

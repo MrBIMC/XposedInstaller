@@ -4,7 +4,7 @@
     <color name="colorPrimary">#2196f3</color>
     <color name="colorPrimaryDark">#1976d2</color>
     <color name="colorPrimaryLight">#727272</color>
-    <color name="colorAccent">#448aff</color>
+    <color name="colorAccent">#FF9100</color>
     <color name="list_header">#777</color>
     <color name="warning">@android:color/holo_red_light</color>
     <color name="warning_box">@android:color/holo_red_dark</color>
@@ -14,7 +14,6 @@
     <color name="welcome_framework_update_available">@color/download_status_update_available</color>
     <color name="welcome_update_available">@color/download_status_update_available</color>
     <color name="darker_green">#ff22aa00</color>
-
 
     <!-- light theme-->
     <color name="background_material_light">#ffeeeeee</color>

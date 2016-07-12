@@ -17,7 +17,7 @@
             android:elevation="2dp"
             app:cardCornerRadius="0dp">
 
-            <Switch
+            <com.kabouzeid.appthemehelper.common.views.ATEStockSwitch
                 android:id="@+id/disableSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -130,7 +130,7 @@
                         android:textAllCaps="true"
                         android:textStyle="bold"/>
 
-                    <ProgressBar
+                    <com.kabouzeid.appthemehelper.common.views.ATEProgressBar
                         android:id="@+id/loading"
                         style="?android:attr/progressBarStyleLarge"
                         android:layout_width="wrap_content"

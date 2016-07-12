@@ -2,25 +2,32 @@ package de.robv.android.xposed.installer;
 
 import android.os.Bundle;
 import android.support.annotation.StringRes;
-import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
+
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.common.ATHToolbarActivity;
 
 import de.robv.android.xposed.installer.util.ThemeUtil;
 
-public abstract class XposedBaseActivity extends AppCompatActivity {
-    public int mTheme = -1;
+public abstract class XposedBaseActivity extends ATHToolbarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceBundle) {
+        if (!ThemeStore.isConfigured(this, 0)) {
+            ThemeStore.editTheme(this)
+                    .activityTheme(R.style.Theme_XposedInstaller_Light)
+                    .primaryColorRes(R.color.colorPrimary)
+                    .accentColorRes(R.color.colorAccent)
+                    .autoGeneratePrimaryDark(true)
+                    .commit();
+        }
         super.onCreate(savedInstanceBundle);
-        ThemeUtil.setTheme(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        XposedApp.setColors(getSupportActionBar(), XposedApp.getColor(this), this);
-        ThemeUtil.reloadTheme(this);
+        ThemeUtil.colorateNavigationBar(this);
     }
 
     public void setFloating(android.support.v7.widget.Toolbar toolbar, @StringRes int details) {
@@ -38,7 +45,9 @@ public abstract class XposedBaseActivity extends AppCompatActivity {
                 toolbar.setTitle(details);
             }
             toolbar.setNavigationIcon(R.drawable.ic_close);
+
             setFinishOnTouchOutside(true);
         }
+        ThemeUtil.tintIcon(this, toolbar);
     }
 }

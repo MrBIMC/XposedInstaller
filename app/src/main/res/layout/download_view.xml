@@ -42,7 +42,7 @@
 
     </LinearLayout>
 
-    <ProgressBar
+    <com.kabouzeid.appthemehelper.common.views.ATEProgressBar
         android:id="@+id/progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"

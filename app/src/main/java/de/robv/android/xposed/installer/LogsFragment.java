@@ -33,6 +33,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Calendar;
 
+import de.robv.android.xposed.installer.util.ThemeUtil;
+
 import static de.robv.android.xposed.installer.XposedApp.WRITE_EXTERNAL_PERMISSION;
 
 public class LogsFragment extends Fragment {
@@ -67,6 +69,12 @@ public class LogsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         reloadErrorLog();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        ThemeUtil.colorateMenu(getActivity(), menu, R.id.menu_scroll_top, R.id.menu_scroll_down, R.id.menu_refresh, R.id.menu_send, R.id.menu_save);
+        super.onPrepareOptionsMenu(menu);
     }
 
     @Override

@@ -22,6 +22,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.kabouzeid.appthemehelper.ATH;
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.util.TabLayoutUtil;
+import com.kabouzeid.appthemehelper.util.ToolbarContentTintHelper;
+
 import java.util.List;
 
 import de.robv.android.xposed.installer.repo.Module;
@@ -31,8 +36,6 @@ import de.robv.android.xposed.installer.util.ModuleUtil.ModuleListener;
 import de.robv.android.xposed.installer.util.RepoLoader;
 import de.robv.android.xposed.installer.util.RepoLoader.RepoListener;
 import de.robv.android.xposed.installer.util.ThemeUtil;
-
-import static de.robv.android.xposed.installer.XposedApp.darkenColor;
 
 public class DownloadDetailsActivity extends XposedBaseActivity
         implements RepoListener, ModuleListener {
@@ -50,8 +53,6 @@ public class DownloadDetailsActivity extends XposedBaseActivity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        ThemeUtil.setTheme(this);
-
         mPackageName = getModulePackageName();
         mModule = sRepoLoader.getModule(mPackageName);
 
@@ -73,6 +74,10 @@ public class DownloadDetailsActivity extends XposedBaseActivity
                     finish();
                 }
             });
+
+            ATH.setStatusbarColorAuto(this);
+            ATH.setActivityToolbarColorAuto(this, toolbar);
+            ATH.setTaskDescriptionColorAuto(this);
 
             ActionBar ab = getSupportActionBar();
 
@@ -108,21 +113,19 @@ public class DownloadDetailsActivity extends XposedBaseActivity
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (Build.VERSION.SDK_INT >= 21)
-            getWindow().setStatusBarColor(darkenColor(XposedApp.getColor(this), 0.85f));
-
-    }
-
     private void setupTabs() {
         mPager = (ViewPager) findViewById(R.id.download_pager);
         mPager.setAdapter(new SwipeFragmentPagerAdapter(getSupportFragmentManager()));
-        TabLayout mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        mTabLayout.setupWithViewPager(mPager);
-        mTabLayout.setBackgroundColor(XposedApp.getColor(this));
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(mPager);
+        int appbarColor = ThemeStore.primaryColor(this);
+
+        tabLayout.setBackgroundColor(appbarColor);
+        int normalColor = ToolbarContentTintHelper.toolbarSubtitleColor(this, appbarColor);
+        int selectedColor = ToolbarContentTintHelper.toolbarTitleColor(this, appbarColor);
+        TabLayoutUtil.setTabIconColors(tabLayout, normalColor, selectedColor);
+        tabLayout.setTabTextColors(normalColor, selectedColor);
+        tabLayout.setSelectedTabIndicatorColor(ThemeStore.accentColor(this));
     }
 
     private String getModulePackageName() {
@@ -185,6 +188,12 @@ public class DownloadDetailsActivity extends XposedBaseActivity
     public void onSingleInstalledModuleReloaded(ModuleUtil moduleUtil, String packageName, InstalledModule module) {
         if (packageName.equals(mPackageName))
             reload();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        ThemeUtil.colorateMenu(this, menu, R.id.bookmarks, R.id.menu_share, R.id.ignoreUpdate, R.id.menu_refresh);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
