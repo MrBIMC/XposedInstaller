@@ -192,7 +192,7 @@ public class DownloadDetailsActivity extends XposedBaseActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        ThemeUtil.colorateMenu(this, menu, R.id.bookmarks, R.id.menu_share, R.id.ignoreUpdate, R.id.menu_refresh);
+        ThemeUtil.colorizeMenu(this, menu, R.id.menu_bookmark, R.id.menu_refresh, R.id.menu_share);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -235,10 +235,10 @@ public class DownloadDetailsActivity extends XposedBaseActivity
 
         if (saved) {
             mItemBookmark.setTitle(R.string.remove_bookmark);
-            mItemBookmark.setIcon(R.drawable.ic_bookmark);
+            mItemBookmark.setIcon(ThemeUtil.tintIcon(this, R.drawable.ic_bookmark));
         } else {
             mItemBookmark.setTitle(R.string.add_bookmark);
-            mItemBookmark.setIcon(R.drawable.ic_bookmark_outline);
+            mItemBookmark.setIcon(ThemeUtil.tintIcon(this, R.drawable.ic_bookmark_outline));
         }
     }
 

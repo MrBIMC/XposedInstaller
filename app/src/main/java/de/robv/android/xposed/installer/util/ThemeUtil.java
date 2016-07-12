@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.DrawableRes;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -34,18 +35,18 @@ public final class ThemeUtil {
 		return result;
 	}
 
-    public static void colorateNavigationBar(Activity activity) {
+    public static void colorizeNavigationBar(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             activity.getWindow().setNavigationBarColor(XposedApp.getPreferences().getBoolean("nav_bar", false) ? ThemeStore.primaryColor(activity) : Color.BLACK);
         }
     }
 
-    public static void colorateMenu(Activity activity, Menu menu, int... ids) {
+    public static void colorizeMenu(Activity activity, Menu menu, int... ids) {
         for (int id : ids) {
             MenuItem item = menu.findItem(id);
-            if (item == null) return;
+            if (item == null) continue;
             Drawable d = item.getIcon();
-            if (d == null) return;
+            if (d == null) continue;
             tintIcon(activity, d);
         }
     }
@@ -70,6 +71,15 @@ public final class ThemeUtil {
             ToolbarContentTintHelper.InternalToolbarContentTintUtil.SearchViewTintUtil.setSearchViewContentColor(searchView, color);
         } catch (Exception ignored) {
         }
+    }
+
+    public static Drawable tintIcon(Activity activity, @DrawableRes int drawable) {
+        int color = MaterialValueHelper.getPrimaryTextColor(activity, ColorUtil.isColorLight(ThemeStore.primaryColor(activity)));
+        Drawable icon = activity.getResources().getDrawable(drawable);
+
+        assert icon != null;
+        icon.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+        return icon;
     }
 
     public static void tintIcon(Activity activity, Drawable icon) {

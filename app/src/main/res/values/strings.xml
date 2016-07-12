@@ -232,7 +232,7 @@
     <string name="no_installed_modules">There isn\'t any installed module!</string>
     <string name="enable_heads_up">Enable Heads-Up notification</string>
     <string name="enable_heads_up_summary">This option enables heads up notification on new/updated module</string>
-    <string name="nav_bar_coloration">Colorate navigation bar</string>
+    <string name="nav_bar_coloration">Colorize navigation bar</string>
     <string name="no_backup_found">No backup found</string>
     <string name="no_enabled_modules">There is any modules enabled</string>
 
@@ -295,7 +295,7 @@
     <string name="bookmark_added">Bookmark added</string>
     <string name="bookmark_removed">Bookmark removed</string>
     <string name="undo">Undo</string>
-    <string name="notification_coloration">Colorate notification icon</string>
+    <string name="notification_coloration">Colorize notification icon</string>
     <string name="file_is_empty">File is empty</string>
     <string name="install_with_su">Install module with root</string>
     <string name="install_with_su_summ">If checked Xposed Installer will install modules without a prompt</string>

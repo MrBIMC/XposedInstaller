@@ -73,7 +73,7 @@ public class LogsFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        ThemeUtil.colorateMenu(getActivity(), menu, R.id.menu_scroll_top, R.id.menu_scroll_down, R.id.menu_refresh, R.id.menu_send, R.id.menu_save);
+        ThemeUtil.colorizeMenu(getActivity(), menu, R.id.menu_scroll_top, R.id.menu_scroll_down, R.id.menu_refresh, R.id.menu_send, R.id.menu_save);
         super.onPrepareOptionsMenu(menu);
     }
 

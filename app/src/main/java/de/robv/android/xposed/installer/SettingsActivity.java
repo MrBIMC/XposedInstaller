@@ -182,6 +182,7 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
                     new ColorChooserDialog.Builder((SettingsActivity) getActivity(), R.string.primary_color)
                             .preselect(ThemeStore.primaryColor(getActivity()))
                             .allowUserColorInputAlpha(false)
+                            .dynamicButtonColor(false)
                             .show();
                     return true;
                 }
@@ -194,6 +195,7 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
                 public boolean onPreferenceClick(Preference preference) {
                     new ColorChooserDialog.Builder((SettingsActivity) getActivity(), R.string.accent_color)
                             .preselect(ThemeStore.accentColor(getActivity()))
+                            .dynamicButtonColor(false)
                             .accentMode(true)
                             .show();
                     return true;
@@ -227,7 +229,7 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
             navBarPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    ThemeUtil.colorateNavigationBar(getActivity());
+                    ThemeUtil.colorizeNavigationBar(getActivity());
                     getActivity().recreate();
                     return true;
                 }

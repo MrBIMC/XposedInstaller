@@ -27,7 +27,7 @@ public abstract class XposedBaseActivity extends ATHToolbarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ThemeUtil.colorateNavigationBar(this);
+        ThemeUtil.colorizeNavigationBar(this);
     }
 
     public void setFloating(android.support.v7.widget.Toolbar toolbar, @StringRes int details) {

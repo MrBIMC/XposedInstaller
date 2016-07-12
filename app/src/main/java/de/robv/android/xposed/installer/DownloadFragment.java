@@ -160,7 +160,7 @@ public class DownloadFragment extends Fragment implements RepoListener, ModuleLi
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        ThemeUtil.colorateMenu(getActivity(), menu, R.id.menu_search, R.id.menu_sort);
+        ThemeUtil.colorizeMenu(getActivity(), menu, R.id.menu_search, R.id.menu_sort);
         super.onPrepareOptionsMenu(menu);
     }
 

@@ -383,7 +383,7 @@ public class InstallerFragment extends Fragment implements DownloadsUtil.Downloa
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        ThemeUtil.colorateMenu(getActivity(), menu, R.id.help, R.id.reboot, R.id.soft_reboot, R.id.reboot_recovery);
+        ThemeUtil.colorizeMenu(getActivity(), menu, R.id.help, R.id.reboot, R.id.soft_reboot, R.id.reboot_recovery);
         super.onPrepareOptionsMenu(menu);
     }
 

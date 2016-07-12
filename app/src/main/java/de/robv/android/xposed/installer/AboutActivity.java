@@ -61,7 +61,7 @@ public class AboutActivity extends XposedBaseActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        ThemeUtil.colorateMenu(this, menu, R.id.share_app);
+        ThemeUtil.colorizeMenu(this, menu, R.id.share_app);
         return super.onPrepareOptionsMenu(menu);
     }
 
