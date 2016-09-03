@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.jude.swipbackhelper.SwipeBackHelper;
+
 import de.robv.android.xposed.installer.util.NavUtil;
 import de.robv.android.xposed.installer.util.ThemeUtil;
 
@@ -40,8 +42,31 @@ public class SupportActivity extends XposedBaseActivity {
 
         setFloating(toolbar, 0);
 
+        if(!isTablet()) {
+            SwipeBackHelper.onCreate(this);
+            SwipeBackHelper.getCurrentPage(this)
+                    .setSwipeEdgePercent(0.2f)
+                    .setSwipeSensitivity(1.0f);
+        }
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.container, new SupportFragment()).commit();
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (!isTablet()) {
+            SwipeBackHelper.onPostCreate(this);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!isTablet()) {
+            SwipeBackHelper.onDestroy(this);
         }
     }
 

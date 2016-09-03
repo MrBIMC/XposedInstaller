@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
+import com.jude.swipbackhelper.SwipeBackHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,6 +67,28 @@ public class SettingsActivity extends XposedBaseActivity implements ColorChooser
                     .add(R.id.container, new SettingsFragment()).commit();
         }
 
+        if(!isTablet()) {
+            SwipeBackHelper.onCreate(this);
+            SwipeBackHelper.getCurrentPage(this)
+                    .setSwipeEdgePercent(0.2f)
+                    .setSwipeSensitivity(1.0f);
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (!isTablet()) {
+            SwipeBackHelper.onPostCreate(this);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!isTablet()) {
+            SwipeBackHelper.onDestroy(this);
+        }
     }
 
     @Override

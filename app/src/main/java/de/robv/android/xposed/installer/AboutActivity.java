@@ -16,8 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.jude.swipbackhelper.SwipeBackHelper;
 
 import de.psdev.licensesdialog.LicensesDialog;
 import de.psdev.licensesdialog.licenses.ApacheSoftwareLicense20;
@@ -57,8 +59,31 @@ public class AboutActivity extends XposedBaseActivity {
 
         setFloating(toolbar, R.string.details);
 
+        if(!isTablet()) {
+            SwipeBackHelper.onCreate(this);
+            SwipeBackHelper.getCurrentPage(this)
+                    .setSwipeEdgePercent(0.2f)
+                    .setSwipeSensitivity(1.0f);
+        }
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.container, new AboutFragment()).commit();
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (!isTablet()) {
+            SwipeBackHelper.onPostCreate(this);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!isTablet()) {
+            SwipeBackHelper.onDestroy(this);
         }
     }
 

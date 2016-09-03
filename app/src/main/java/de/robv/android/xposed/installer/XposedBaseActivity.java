@@ -24,8 +24,7 @@ public abstract class XposedBaseActivity extends AppCompatActivity {
     }
 
     public void setFloating(android.support.v7.widget.Toolbar toolbar, @StringRes int details) {
-        boolean isTablet = getResources().getBoolean(R.bool.isTablet);
-        if (isTablet) {
+        if (isTablet()) {
             WindowManager.LayoutParams params = getWindow().getAttributes();
             params.height = getResources().getDimensionPixelSize(R.dimen.floating_height);
             params.width = getResources().getDimensionPixelSize(R.dimen.floating_width);
@@ -40,5 +39,9 @@ public abstract class XposedBaseActivity extends AppCompatActivity {
             toolbar.setNavigationIcon(R.drawable.ic_close);
             setFinishOnTouchOutside(true);
         }
+    }
+
+    public boolean isTablet() {
+        return getResources().getBoolean(R.bool.isTablet);
     }
 }

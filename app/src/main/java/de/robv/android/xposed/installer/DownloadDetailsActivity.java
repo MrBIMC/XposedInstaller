@@ -22,6 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.jude.swipbackhelper.SwipeBackHelper;
+
 import java.util.List;
 
 import de.robv.android.xposed.installer.repo.Module;
@@ -59,6 +61,13 @@ public class DownloadDetailsActivity extends XposedBaseActivity implements RepoL
         super.onCreate(savedInstanceState);
         sRepoLoader.addListener(this, false);
         sModuleUtil.addListener(this);
+
+        if(!isTablet()) {
+            SwipeBackHelper.onCreate(this);
+            SwipeBackHelper.getCurrentPage(this)
+                    .setSwipeEdgePercent(0.2f)
+                    .setSwipeSensitivity(1.0f);
+        }
 
         if (mModule != null) {
             setContentView(R.layout.activity_download_details);
@@ -109,9 +118,16 @@ public class DownloadDetailsActivity extends XposedBaseActivity implements RepoL
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (!isTablet()) {
+            SwipeBackHelper.onPostCreate(this);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-
         if (Build.VERSION.SDK_INT >= 21)
             getWindow().setStatusBarColor(darkenColor(XposedApp.getColor(this), 0.85f));
 
@@ -123,6 +139,24 @@ public class DownloadDetailsActivity extends XposedBaseActivity implements RepoL
         TabLayout mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         mTabLayout.setupWithViewPager(mPager);
         mTabLayout.setBackgroundColor(XposedApp.getColor(this));
+
+        if (!isTablet()) {
+            mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    SwipeBackHelper.getCurrentPage(DownloadDetailsActivity.this)
+                            .setDisallowInterceptTouchEvent(position != 0);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            });
+        }
     }
 
     private String getModulePackageName() {
@@ -148,6 +182,9 @@ public class DownloadDetailsActivity extends XposedBaseActivity implements RepoL
         super.onDestroy();
         sRepoLoader.removeListener(this);
         sModuleUtil.removeListener(this);
+        if (!isTablet()) {
+            SwipeBackHelper.onDestroy(this);
+        }
     }
 
     public Module getModule() {
